@@ -1,0 +1,51 @@
+# ===========================
+# BACKEND
+# ===========================
+
+# Maven build
+backend/target/
+backend/*.class
+backend/*.jar
+backend/*.war
+
+# Backend IDE files
+backend/.idea/
+backend/*.iml
+
+# Backend secrets
+backend/src/main/resources/application.properties
+
+# ===========================
+# FRONTEND
+# ===========================
+
+# Dependencies
+frontend/node_modules/
+
+# Build output
+frontend/build/
+frontend/dist/
+
+# Frontend env
+frontend/.env
+frontend/.env.local
+
+# ===========================
+# GENERAL
+# ===========================
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temp
+*.tmp
+*.bak
