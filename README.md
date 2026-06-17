@@ -697,98 +697,96 @@ npm start
 
 ## 📸 Screenshots
 
-> All screenshots are stored in the [`screenshots/`](screenshots/) folder.
-> Click any link below to view the screenshot.
+> All screenshots are stored in the `screenshots/` folder.
+> Click any thumbnail below to view the full screenshot.
 
 ---
 
 ### 🔐 Authentication
 
-| Screen | Link |
-|--------|------|
-| Login Page | [View](screenshots/01-login-page.png) |
-| Registration Page | [View](screenshots/02-register-page.png) |
-| Form Validation Errors | [View](screenshots/04-register-validation.png) |
-| Forgot Password — OTP Flow | [View](screenshots/03-forgot-password-otp.png) |
-| Login Error with Register Hint | [View](screenshots/25-login-error.png) |
-| Real-Time Email Check | [View](screenshots/26-email-available-check.png) |
+| Screen | Preview |
+|--------|---------|
+| Login Page | [<img src="screenshots/01-login-page.png" width="200">](screenshots/01-login-page.png) |
+| Registration Page | [<img src="screenshots/02-register-page.png" width="200">](screenshots/02-register-page.png) |
+| Form Validation Errors | [<img src="screenshots/04-register-validation.png" width="200">](screenshots/04-register-validation.png) |
+| Forgot Password — OTP Flow | [<img src="screenshots/03-forgot-password-otp.png" width="200">](screenshots/03-forgot-password-otp.png) |
+| Login Error with Register Hint | [<img src="screenshots/25-login-error.png" width="200">](screenshots/25-login-error.png) |
+| Real-Time Email Check | [<img src="screenshots/26-email-available-check.png" width="200">](screenshots/26-email-available-check.png) |
 
 ---
 
 ### 🤒 Patient Dashboard
 
-| Screen | Link |
-|--------|------|
-| Patient Home — Health Summary | [View](screenshots/05-patient-home.png) |
-| Dynamic Health Tips — Shuffle | [View](screenshots/27-health-tips-shuffle.png) |
-| Browse Doctors List | [View](screenshots/06-patient-doctors-list.png) |
-| Unavailable Doctor Card | [View](screenshots/29-unavailable-doctor-card.png) |
-| Book Appointment Step 1 — Select Doctor | [View](screenshots/07-book-appointment-step1.png) |
-| Book Appointment Step 2 — Details Form | [View](screenshots/08-book-appointment-step2.png) |
-| Time Slot Dropdown | [View](screenshots/45-time-slot-dropdown.png) |
-| My Appointments — Search & Filter | [View](screenshots/09-patient-appointments.png) |
-| Search Appointments by Doctor | [View](screenshots/43-patient-appointment-search.png) |
-| Cancel Appointment Confirmation | [View](screenshots/30-cancel-appointment-dialog.png) |
-| Medical Records | [View](screenshots/10-patient-medical-records.png) |
-| Patient Notifications | [View](screenshots/23-notifications-patient.png) |
-| Rejection Reason in Notification | [View](screenshots/50-rejection-reason-notification.png) |
-| Profile Settings | [View](screenshots/28-patient-profile.png) |
+| Screen | Preview |
+|--------|---------|
+| Patient Home — Health Summary | [<img src="screenshots/05-patient-home.png" width="200">](screenshots/05-patient-home.png) |
+| Dynamic Health Tips — Shuffle | [<img src="screenshots/27-health-tips-shuffle.png" width="200">](screenshots/27-health-tips-shuffle.png) |
+| Browse Doctors List | [<img src="screenshots/06-patient-doctors-list.png" width="200">](screenshots/06-patient-doctors-list.png) |
+| Unavailable Doctor Card | [<img src="screenshots/29-unavailable-doctor-card.png" width="200">](screenshots/29-unavailable-doctor-card.png) |
+| Book Appointment Step 1 | [<img src="screenshots/07-book-appointment-step1.png" width="200">](screenshots/07-book-appointment-step1.png) |
+| Book Appointment Step 2 | [<img src="screenshots/08-book-appointment-step2.png" width="200">](screenshots/08-book-appointment-step2.png) |
+| Time Slot Dropdown | [<img src="screenshots/45-time-slot-dropdown.png" width="200">](screenshots/45-time-slot-dropdown.png) |
+| My Appointments | [<img src="screenshots/09-patient-appointments.png" width="200">](screenshots/09-patient-appointments.png) |
+| Search Appointments | [<img src="screenshots/43-patient-appointment-search.png" width="200">](screenshots/43-patient-appointment-search.png) |
+| Cancel Confirmation Dialog | [<img src="screenshots/30-cancel-appointment-dialog.png" width="200">](screenshots/30-cancel-appointment-dialog.png) |
+| Medical Records | [<img src="screenshots/10-patient-medical-records.png" width="200">](screenshots/10-patient-medical-records.png) |
+| Patient Notifications | [<img src="screenshots/23-notifications-patient.png" width="200">](screenshots/23-notifications-patient.png) |
+| Rejection Reason in Notification | [<img src="screenshots/50-rejection-reason-notification.png" width="200">](screenshots/50-rejection-reason-notification.png) |
+| Profile Settings | [<img src="screenshots/28-patient-profile.png" width="200">](screenshots/28-patient-profile.png) |
 
 ---
 
 ### 👨‍⚕️ Doctor Dashboard
 
-| Screen | Link |
-|--------|------|
-| Doctor Home — Available State | [View](screenshots/11-doctor-home.png) |
-| Doctor Home — Unavailable State | [View](screenshots/15-doctor-unavailable.png) |
-| Doctor Stats Cards | [View](screenshots/44-doctor-stats-cards.png) |
-| Appointment Requests | [View](screenshots/12-doctor-appointments.png) |
-| Decline Modal — Preset Reasons | [View](screenshots/13-doctor-decline-modal.png) |
-| Decline Modal — Custom Other Reason | [View](screenshots/34-doctor-decline-other.png) |
-| Patient Medical History | [View](screenshots/31-doctor-patient-history.png) |
-| Create Medical Record | [View](screenshots/14-doctor-create-record.png) |
-| Doctor Notifications | [View](screenshots/32-doctor-notifications.png) |
-| Doctor Profile and Hospital Info | [View](screenshots/33-doctor-profile-hospital.png) |
+| Screen | Preview |
+|--------|---------|
+| Doctor Home — Available | [<img src="screenshots/11-doctor-home.png" width="200">](screenshots/11-doctor-home.png) |
+| Doctor Home — Unavailable | [<img src="screenshots/15-doctor-unavailable.png" width="200">](screenshots/15-doctor-unavailable.png) |
+| Doctor Stats Cards | [<img src="screenshots/44-doctor-stats-cards.png" width="200">](screenshots/44-doctor-stats-cards.png) |
+| Appointment Requests | [<img src="screenshots/12-doctor-appointments.png" width="200">](screenshots/12-doctor-appointments.png) |
+| Decline — Preset Reasons | [<img src="screenshots/13-doctor-decline-modal.png" width="200">](screenshots/13-doctor-decline-modal.png) |
+| Decline — Custom Reason | [<img src="screenshots/34-doctor-decline-other.png" width="200">](screenshots/34-doctor-decline-other.png) |
+| Patient Medical History | [<img src="screenshots/31-doctor-patient-history.png" width="200">](screenshots/31-doctor-patient-history.png) |
+| Create Medical Record | [<img src="screenshots/14-doctor-create-record.png" width="200">](screenshots/14-doctor-create-record.png) |
+| Doctor Notifications | [<img src="screenshots/32-doctor-notifications.png" width="200">](screenshots/32-doctor-notifications.png) |
+| Doctor Profile & Hospital | [<img src="screenshots/33-doctor-profile-hospital.png" width="200">](screenshots/33-doctor-profile-hospital.png) |
 
 ---
 
 ### 👑 Admin Dashboard
 
-| Screen | Link |
-|--------|------|
-| Admin Home — System Statistics | [View](screenshots/16-admin-home.png) |
-| Manage All Users | [View](screenshots/17-admin-users.png) |
-| Edit User Details | [View](screenshots/18-admin-edit-user.png) |
-| Deactivate User Account | [View](screenshots/38-admin-deactivate-user.png) |
-| Reset User Password | [View](screenshots/37-admin-reset-password.png) |
-| All Appointments with Filter Tabs | [View](screenshots/19-admin-appointments.png) |
-| Assign Doctor to Appointment | [View](screenshots/20-admin-assign-doctor.png) |
-| All Medical Records | [View](screenshots/36-admin-medical-records.png) |
-| Send Notification to User | [View](screenshots/35-admin-send-notification.png) |
+| Screen | Preview |
+|--------|---------|
+| Admin Home — Statistics | [<img src="screenshots/16-admin-home.png" width="200">](screenshots/16-admin-home.png) |
+| Manage All Users | [<img src="screenshots/17-admin-users.png" width="200">](screenshots/17-admin-users.png) |
+| Edit User Details | [<img src="screenshots/18-admin-edit-user.png" width="200">](screenshots/18-admin-edit-user.png) |
+| Deactivate User | [<img src="screenshots/38-admin-deactivate-user.png" width="200">](screenshots/38-admin-deactivate-user.png) |
+| Reset User Password | [<img src="screenshots/37-admin-reset-password.png" width="200">](screenshots/37-admin-reset-password.png) |
+| All Appointments | [<img src="screenshots/19-admin-appointments.png" width="200">](screenshots/19-admin-appointments.png) |
+| Assign Doctor | [<img src="screenshots/20-admin-assign-doctor.png" width="200">](screenshots/20-admin-assign-doctor.png) |
+| All Medical Records | [<img src="screenshots/36-admin-medical-records.png" width="200">](screenshots/36-admin-medical-records.png) |
+| Send Notification | [<img src="screenshots/35-admin-send-notification.png" width="200">](screenshots/35-admin-send-notification.png) |
 
 ---
 
 ### 📚 Swagger API Documentation
 
-| Screen | Link |
-|--------|------|
-| Swagger UI — All Endpoints | [View](screenshots/21-swagger-ui-overview.png) |
-| Authentication Endpoints | [View](screenshots/22-swagger-auth-endpoints.png) |
-| Appointment Endpoints | [View](screenshots/41-swagger-appointment-endpoints.png) |
-| Authorize with JWT Token | [View](screenshots/39-swagger-authorize.png) |
-| Live API Test — Try It Out | [View](screenshots/40-swagger-try-it-out.png) |
+| Screen | Preview |
+|--------|---------|
+| Swagger UI Overview | [<img src="screenshots/21-swagger-ui-overview.png" width="200">](screenshots/21-swagger-ui-overview.png) |
+| Authentication Endpoints | [<img src="screenshots/22-swagger-auth-endpoints.png" width="200">](screenshots/22-swagger-auth-endpoints.png) |
+| Appointment Endpoints | [<img src="screenshots/41-swagger-appointment-endpoints.png" width="200">](screenshots/41-swagger-appointment-endpoints.png) |
+| Authorize with JWT | [<img src="screenshots/39-swagger-authorize.png" width="200">](screenshots/39-swagger-authorize.png) |
+| Live API Testing | [<img src="screenshots/40-swagger-try-it-out.png" width="200">](screenshots/40-swagger-try-it-out.png) |
 
 ---
 
 ### 🔔 System Features
 
-| Screen | Link |
-|--------|------|
-| Toast Notification | [View](screenshots/24-toast-notification.png) |
-| Confirmation Dialog | [View](screenshots/42-confirm-dialog.png) |
-
----
+| Screen | Preview |
+|--------|---------|
+| Toast Notification | [<img src="screenshots/24-toast-notification.png" width="200">](screenshots/24-toast-notification.png) |
+| Confirmation Dialog | [<img src="screenshots/42-confirm-dialog.png" width="200">](screenshots/42-confirm-dialog.png) |
 
 ## 🔮 Future Enhancements
 
