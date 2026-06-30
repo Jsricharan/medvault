@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import DoctorLeaveCalendar from './DoctorLeaveCalendar';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../../services/authService';
 import { getUnreadCount } from '../../services/notificationService';
@@ -26,6 +27,8 @@ const quickActions = [
   { label: 'Notifications', desc: 'View unread alerts', icon: '🔔', tab: 'notifications', bg: '#fef3c7' },
   { label: 'Settings', desc: 'Update profile details', icon: '⚙️', tab: 'profile', bg: '#e0f2fe' }
 ];
+
+// 🟢 REMOVED THE broken global menuItems array from here
 
 function DoctorDashboard() {
   const [activeTab, setActiveTab] = useState('home');
@@ -57,15 +60,12 @@ function DoctorDashboard() {
     try {
       const profile = await getProfile();
 
-      // Use 'available' field - default true
-      // Only false if explicitly set
       const isAvail =
         profile.available !== false &&
         profile.available !== 0;
 
       setIsAvailable(isAvail);
 
-      // Save to localStorage
       const email = localStorage.getItem('email');
       localStorage.setItem(
         `availability_${email}`,
@@ -80,7 +80,6 @@ function DoctorDashboard() {
       );
     } catch (err) {
       console.error('Availability error:', err);
-      // Default to available if error
       setIsAvailable(true);
     }
   };
@@ -92,7 +91,6 @@ function DoctorDashboard() {
       const newVal = response.available;
       setIsAvailable(newVal);
 
-      // Save to localStorage
       const email = localStorage.getItem('email');
       localStorage.setItem(
         `availability_${email}`,
@@ -115,10 +113,12 @@ function DoctorDashboard() {
     navigate('/login');
   };
 
+  // 🟢 This internal menuItems definition works perfectly because it's inside the scope of unreadCount
   const menuItems = [
     { id: 'home', icon: '🏠', label: 'Home' },
     { id: 'appointments', icon: '📅', label: 'Appointments' },
     { id: 'createRecord', icon: '📋', label: 'Create Record' },
+    { id: 'leaves', icon: '📆', label: 'My Leaves' }, // Added your new 'leaves' tab here safely
     { id: 'notifications', icon: '🔔', label: 'Notifications', badge: unreadCount },
     { id: 'profile', icon: '⚙️', label: 'Profile Settings' },
   ];
@@ -310,6 +310,10 @@ function DoctorDashboard() {
             </div>
           )}
 
+          {activeTab === 'leaves' && (
+            <DoctorLeaveCalendar />
+          )}
+
           {activeTab === 'home' && (
             <DoctorHomeTab
               fullName={fullName}
@@ -383,13 +387,13 @@ function DoctorHomeTab({ fullName, setActiveTab, isAvailable, onToggle, availabi
         </div>
       </div>
 
-      {/* FIXED: Availability Status Card (Properly Closed) */}
+      {/* Availability Status Card */}
       <div style={{
         background: 'white', borderRadius: '16px', padding: '20px', marginBottom: '28px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
         border: `2px solid ${isAvailable ? '#a7f3d0' : '#fecaca'}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: isAvailable ? '#d1fae5' : '#fee2e2', display: 'flex', alignItems: 'center', justifyBox: 'center', justifyContent: 'center', fontSize: '24px' }}>
+          <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: isAvailable ? '#d1fae5' : '#fee2e2', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px' }}>
             {isAvailable ? '🟢' : '🔴'}
           </div>
           <div>

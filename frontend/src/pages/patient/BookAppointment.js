@@ -3,6 +3,8 @@ import { bookAppointment } from '../../services/appointmentService';
 import { getAllDoctors } from '../../services/adminService';
 import { formatDoctorName } from '../../utils/helpers';
 import { showToast } from '../../components/Toast';
+// Change 1 — Add Import at Top
+import { getDoctorLeaves } from '../../services/doctorLeaveService';
 
 function BookAppointment({ onBooked }) {
 
@@ -22,6 +24,10 @@ function BookAppointment({ onBooked }) {
     notes: ''
   });
 
+  // Change 2 — Add State for Doctor Leaves
+  const [doctorLeaves, setDoctorLeaves] = useState([]);
+  const [leaveWarning, setLeaveWarning] = useState('');
+  
   const [errors, setErrors] = useState({});
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -34,7 +40,6 @@ function BookAppointment({ onBooked }) {
 
   const loadDoctors = async () => {
     try {
-      // Fresh fetch with no cache
       const response = await fetch(
         `http://localhost:8080/api/admin/doctors?t=${Date.now()}`,
         {
@@ -53,12 +58,23 @@ function BookAppointment({ onBooked }) {
     }
   };
 
-  // Filter doctors by search
+  // Change 3 — Load Leaves When Doctor is Selected
+  const handleDoctorSelect = async (doctor) => {
+    setSelectedDoctor(doctor);
+    setLeaveWarning('');
+    try {
+      const leaves = await getDoctorLeaves(doctor.id);
+      setDoctorLeaves(Array.isArray(leaves) ? leaves : []);
+    } catch (err) {
+      console.error('Error loading leaves:', err);
+      setDoctorLeaves([]);
+    }
+    setStep(2);
+  };
+
   const filteredDoctors = doctors.filter(doc =>
-    doc.fullName.toLowerCase()
-      .includes(search.toLowerCase()) ||
-    (doc.specialization || '').toLowerCase()
-      .includes(search.toLowerCase())
+    doc.fullName.toLowerCase().includes(search.toLowerCase()) ||
+    (doc.specialization || '').toLowerCase().includes(search.toLowerCase())
   );
 
   const handleChange = (e) => {
@@ -76,7 +92,6 @@ function BookAppointment({ onBooked }) {
       return newErrors;
     }
 
-    // Check if date is in the past
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const selectedDate = new Date(formData.appointmentDate);
@@ -91,7 +106,6 @@ function BookAppointment({ onBooked }) {
       return newErrors;
     }
 
-    // Check if selected time is past for today
     const isToday = selectedDate.toDateString() === new Date().toDateString();
 
     if (isToday) {
@@ -123,7 +137,7 @@ function BookAppointment({ onBooked }) {
     setSuccess('');
 
     const validationErrors = validate();
-    if (Object.keys(validationErrors).length > 0) {
+    if (Object.keys(validationErrors).length > 0 || leaveWarning) {
       setErrors(validationErrors);
       return;
     }
@@ -133,7 +147,6 @@ function BookAppointment({ onBooked }) {
     try {
       const bookingData = {
         appointmentDate: formData.appointmentDate,
-        // Time already in HH:MM format from select
         appointmentTime:
           formData.appointmentTime.length === 5
             ? formData.appointmentTime + ':00'
@@ -167,7 +180,6 @@ function BookAppointment({ onBooked }) {
     }
   };
 
-  // Specialization badge colors
   const getSpecColor = (spec) => {
     const colors = {
       'Cardiologist': { bg: '#fee2e2', color: '#ef4444' },
@@ -186,7 +198,6 @@ function BookAppointment({ onBooked }) {
 
   return (
     <div>
-
       {/* Header */}
       <div style={{ marginBottom: '24px' }}>
         <h4 style={{ fontWeight: '700', color: '#1e293b', margin: '0 0 4px' }}>
@@ -199,7 +210,6 @@ function BookAppointment({ onBooked }) {
 
       {/* Progress Steps */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '0', marginBottom: '28px' }}>
-        {/* Step 1 */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <div style={{
             width: '32px',
@@ -220,10 +230,8 @@ function BookAppointment({ onBooked }) {
           </span>
         </div>
 
-        {/* Line */}
         <div style={{ flex: 1, height: '2px', background: step >= 2 ? '#6366f1' : '#e2e8f0', margin: '0 12px', maxWidth: '60px' }}/>
 
-        {/* Step 2 */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <div style={{
             width: '32px',
@@ -248,8 +256,6 @@ function BookAppointment({ onBooked }) {
       {/* STEP 1 — Select Doctor */}
       {step === 1 && (
         <div>
-
-          {/* Info Box */}
           <div style={{
             background: '#eff6ff',
             border: '1px solid #bfdbfe',
@@ -268,7 +274,6 @@ function BookAppointment({ onBooked }) {
             </span>
           </div>
 
-          {/* Search */}
           <div style={{ position: 'relative', marginBottom: '20px' }}>
             <span style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8', fontSize: '16px' }}>
               🔍
@@ -292,7 +297,6 @@ function BookAppointment({ onBooked }) {
             />
           </div>
 
-          {/* Skip Option */}
           <div
             onClick={() => {
               setSelectedDoctor(null);
@@ -344,7 +348,6 @@ function BookAppointment({ onBooked }) {
             </span>
           </div>
 
-          {/* Doctors Grid */}
           {loadingDoctors ? (
             <div style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>
               <div className="spinner-border spinner-border-sm text-primary me-2"/>
@@ -360,10 +363,10 @@ function BookAppointment({ onBooked }) {
                 return (
                   <div
                     key={doctor.id}
+                    // Change 3 applied: custom handleDoctorSelect used here
                     onClick={() => {
                       if (!isUnavailable) {
-                        setSelectedDoctor(doctor);
-                        setStep(2);
+                        handleDoctorSelect(doctor);
                       }
                     }}
                     style={{
@@ -392,7 +395,6 @@ function BookAppointment({ onBooked }) {
                       }
                     }}>
 
-                    {/* Unavailable Overlay Badge */}
                     {isUnavailable && (
                       <div style={{
                         position: 'absolute',
@@ -409,7 +411,6 @@ function BookAppointment({ onBooked }) {
                       </div>
                     )}
 
-                    {/* Doctor Identity Layout block */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '16px' }}>
                       <div style={{ width: '56px', height: '56px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0, border: '2px solid #e2e8f0' }}>
                         {doctor.profilePicture ? (
@@ -464,7 +465,6 @@ function BookAppointment({ onBooked }) {
 
                     <div style={{ height: '1px', background: '#f1f5f9', marginBottom: '14px' }}/>
 
-                    {/* Doctor Details */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -518,8 +518,6 @@ function BookAppointment({ onBooked }) {
       {/* STEP 2 — Appointment Details */}
       {step === 2 && (
         <div>
-
-          {/* Selected Doctor Card overview */}
           <div style={{
             background: 'white',
             borderRadius: '16px',
@@ -566,6 +564,8 @@ function BookAppointment({ onBooked }) {
                   type="button"
                   onClick={() => {
                     setSelectedDoctor(null);
+                    setDoctorLeaves([]);
+                    setLeaveWarning('');
                     setStep(1);
                   }}
                   style={{
@@ -583,7 +583,7 @@ function BookAppointment({ onBooked }) {
               </div>
             ) : (
               <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyYontent: 'center', fontSize: '22px', flexShrink: 0 }}>
+                <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', flexShrink: 0 }}>
                   🏥
                 </div>
                 <div style={{ flex: 1 }}>
@@ -613,7 +613,6 @@ function BookAppointment({ onBooked }) {
             )}
           </div>
 
-          {/* Alerts */}
           {error && (
             <div style={{ background: '#fee2e2', border: '1px solid #fecaca', borderRadius: '12px', padding: '12px 16px', marginBottom: '20px', color: '#dc2626', fontSize: '14px' }}>
               ❌ {error}
@@ -626,11 +625,7 @@ function BookAppointment({ onBooked }) {
           )}
 
           <form onSubmit={handleSubmit}>
-
-            {/* Date and Time Row container Grid */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
-
-              {/* Appointment Date Input field */}
               <div>
                 <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>
                   Appointment Date
@@ -640,6 +635,7 @@ function BookAppointment({ onBooked }) {
                   type="date"
                   name="appointmentDate"
                   value={formData.appointmentDate}
+                  // Change 4 — Check Leave When Date is Selected
                   onChange={(e) => {
                     const selectedDate = e.target.value;
                     const today = new Date().toISOString().split('T')[0];
@@ -649,6 +645,26 @@ function BookAppointment({ onBooked }) {
                       return;
                     }
                     handleChange(e);
+
+                    if (selectedDoctor && selectedDate) {
+                      const isOnLeave = doctorLeaves.some(
+                        leave => leave.leaveDate === selectedDate
+                      );
+                      if (isOnLeave) {
+                        setLeaveWarning(
+                          formatDoctorName(selectedDoctor.fullName) +
+                          ' is on leave on ' +
+                          new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', {
+                            month: 'long',
+                            day: 'numeric',
+                            year: 'numeric'
+                          }) +
+                          '. Please select a different date.'
+                        );
+                      } else {
+                        setLeaveWarning('');
+                      }
+                    }
                   }}
                   min={new Date().toISOString().split('T')[0]}
                   style={{
@@ -667,9 +683,27 @@ function BookAppointment({ onBooked }) {
                     {errors.appointmentDate}
                   </p>
                 )}
+
+                {/* Change 5 — Show Warning Below Date Picker */}
+                {leaveWarning && (
+                  <div style={{
+                    background: '#fee2e2',
+                    border: '1px solid #fecaca',
+                    borderRadius: '8px',
+                    padding: '10px 14px',
+                    marginTop: '8px',
+                    color: '#dc2626',
+                    fontSize: '13px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}>
+                    <span>🔴</span>
+                    <span>{leaveWarning}</span>
+                  </div>
+                )}
               </div>
 
-              {/* Appointment Fixed Time Slots Selector */}
               <div>
                 <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>
                   Appointment Time
@@ -702,8 +736,6 @@ function BookAppointment({ onBooked }) {
                     }
                   }}>
                   <option value="">-- Select Time Slot --</option>
-
-                  {/* Morning Session */}
                   <optgroup label="🌅 Morning (9:30 AM - 1:00 PM)">
                     <option value="09:30">9:30 AM</option>
                     <option value="10:00">10:00 AM</option>
@@ -713,8 +745,6 @@ function BookAppointment({ onBooked }) {
                     <option value="12:00">12:00 PM</option>
                     <option value="12:30">12:30 PM</option>
                   </optgroup>
-
-                  {/* Evening Session */}
                   <optgroup label="🌆 Evening (2:00 PM - 10:00 PM)">
                     <option value="14:00">2:00 PM</option>
                     <option value="14:30">2:30 PM</option>
@@ -736,7 +766,6 @@ function BookAppointment({ onBooked }) {
                   </optgroup>
                 </select>
 
-                {/* Time Selection Indicator Badge preview */}
                 {formData.appointmentTime && (
                   <p style={{ color: '#22c55e', fontSize: '12px', margin: '4px 0 0', fontWeight: '500' }}>
                     ✓ Selected: {(() => {
@@ -757,7 +786,6 @@ function BookAppointment({ onBooked }) {
               </div>
             </div>
 
-            {/* Problem Symptom Details description textarea context block */}
             <div style={{ marginBottom: '24px' }}>
               <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>
                 Describe Your Problem
@@ -794,11 +822,13 @@ function BookAppointment({ onBooked }) {
               </div>
             </div>
 
-            {/* Action buttons handling context changes */}
             <div style={{ display: 'flex', gap: '12px' }}>
               <button
                 type="button"
-                onClick={() => setStep(1)}
+                onClick={() => {
+                  setLeaveWarning('');
+                  setStep(1);
+                }}
                 style={{
                   padding: '12px 24px',
                   background: 'white',
@@ -814,18 +844,19 @@ function BookAppointment({ onBooked }) {
 
               <button
                 type="submit"
-                disabled={loading}
+                // Change 6 — Disable Submit on Leave Warning
+                disabled={loading || !!leaveWarning}
                 style={{
                   flex: 1,
                   padding: '12px 24px',
-                  background: loading ? '#c7d2fe' : 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                  background: (loading || !!leaveWarning) ? '#c7d2fe' : 'linear-gradient(135deg, #6366f1, #8b5cf6)',
                   border: 'none',
                   borderRadius: '10px',
                   color: 'white',
                   fontSize: '14px',
                   fontWeight: '600',
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  boxShadow: loading ? 'none' : '0 4px 15px rgba(99,102,241,0.4)',
+                  cursor: (loading || !!leaveWarning) ? 'not-allowed' : 'pointer',
+                  boxShadow: (loading || !!leaveWarning) ? 'none' : '0 4px 15px rgba(99,102,241,0.4)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -843,7 +874,6 @@ function BookAppointment({ onBooked }) {
                 )}
               </button>
             </div>
-
           </form>
         </div>
       )}

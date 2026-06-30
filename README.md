@@ -57,14 +57,14 @@ and streamlines hospital workflows. The platform supports three roles:
 - 🤒 **Patients** — Register, book appointments, view prescriptions and medical records,
   receive real-time notifications, track appointment status
 - 👨‍⚕️ **Doctors** — Manage appointment requests with preset rejection reasons, create
-  detailed medical records with medicine schedules, toggle availability status
+  detailed medical records with medicine schedules, toggle availability status, and
+  mark specific calendar dates as leave to block bookings on those days
 - 👑 **Administrators** — Full system control over users, appointments, doctor assignments,
   notifications, and statistics
 
 > Built to demonstrate enterprise-grade software engineering with clean architecture,
-> JWT security, RESTful APIs, real-time notifications, and a professional UI.
-
----
+> JWT security, RESTful APIs, real-time notifications, doctor leave management,
+> and a professional UI.
 
 ## ✨ Features
 
@@ -110,6 +110,7 @@ and streamlines hospital workflows. The platform supports three roles:
 |---------|-------------|
 | Availability Toggle | Self-manage availability with real-time patient-side sync |
 | Stats Dashboard | Total, pending, confirmed, completed appointment counts |
+| Leave Management | Doctor can mark specific dates as unavailable. Patients automatically blocked from booking those dates. |
 | Appointment Request Cards | Visual cards with patient info and problem description |
 | Smart Accept Flow | Confirm dialog before accepting appointments |
 | Decline with Preset Reasons | 7 preset reasons + mandatory custom "Other" option |
@@ -236,22 +237,26 @@ medvault/
 │   │   │   ├── NotificationController.java  Send, Read, Count
 │   │   │   ├── AdminController.java         Users, Stats, Assignments
 │   │   │   ├── ProfileController.java       Profile, Phone, Password, Hospital
-│   │   │   └── ForgotPasswordController.java OTP Password Reset
+│   │   │   ├── ForgotPasswordController.java OTP Password Reset
+│   │   │   └── DoctorLeaveController.java   Add/View/Cancel Leave Dates
 │   │   ├── 📁 service/
 │   │   │   ├── AuthService.java
-│   │   │   ├── AppointmentService.java      Auto-notifications on status change
+│   │   │   ├── AppointmentService.java      Auto-notifications + leave check
 │   │   │   ├── MedicalRecordService.java
-│   │   │   └── NotificationService.java
+│   │   │   ├── NotificationService.java
+│   │   │   └── DoctorLeaveService.java      Leave validation & business rules
 │   │   ├── 📁 repository/
 │   │   │   ├── UserRepository.java
 │   │   │   ├── AppointmentRepository.java
 │   │   │   ├── MedicalRecordRepository.java
-│   │   │   └── NotificationRepository.java
+│   │   │   ├── NotificationRepository.java
+│   │   │   └── DoctorLeaveRepository.java   Custom leave queries
 │   │   ├── 📁 entity/
 │   │   │   ├── User.java                    enabled + available fields
 │   │   │   ├── Appointment.java             Nullable doctor field
 │   │   │   ├── MedicalRecord.java           Medicine schedule JSON
 │   │   │   ├── Notification.java
+│   │   │   ├── DoctorLeave.java             Doctor leave date entity
 │   │   │   └── Role.java                    PATIENT / DOCTOR / ADMIN
 │   │   ├── 📁 dto/
 │   │   │   ├── RegisterRequest.java
@@ -299,10 +304,11 @@ medvault/
 │   │   │   │   ├── MyNotifications.js       Notification feed
 │   │   │   │   └── DoctorsList.js           Doctor discovery page
 │   │   │   ├── 📁 doctor/
-│   │   │   │   ├── DoctorDashboard.js       Availability + stats
+│   │   │   │   ├── DoctorDashboard.java     Availability + stats + leaves tab
 │   │   │   │   ├── DoctorAppointments.js    Accept/Decline + reasons
 │   │   │   │   ├── DoctorNotifications.js
-│   │   │   │   └── CreateMedicalRecord.js   Medicine timings
+│   │   │   │   ├── CreateMedicalRecord.js   Medicine timings
+│   │   │   │   └── DoctorLeaveCalendar.js   Add/View/Cancel leave dates
 │   │   │   └── 📁 admin/
 │   │   │       ├── AdminDashboard.js        Stats + quick actions
 │   │   │       ├── AllUsers.js              CRUD all users
@@ -316,7 +322,8 @@ medvault/
 │   │   │   ├── medicalRecordService.js
 │   │   │   ├── notificationService.js
 │   │   │   ├── profileService.js
-│   │   │   └── adminService.js
+│   │   │   ├── adminService.js
+│   │   │   └── doctorLeaveService.js        Leave CRUD API calls
 │   │   ├── 📁 utils/
 │   │   │   ├── helpers.js                   Dr. prefix formatter
 │   │   │   ├── specializations.js           38 medical specializations
@@ -395,6 +402,15 @@ appointments (M) ────────── (1) users (doctor — nullable)
 | created_at | DATETIME | AUTO | Creation time |
 | updated_at | DATETIME | AUTO | Update time |
 
+### doctor_leaves
+| Column | Type | Description |
+|--------|------|-------------|
+| id | BIGINT | Primary key |
+| doctor_id | BIGINT FK | Which doctor |
+| leave_date | DATE | The leave date |
+| reason | VARCHAR | Optional reason |
+| created_at | DATETIME | When created |
+
 ### `notifications` Table
 | Column | Type | Constraint | Description |
 |--------|------|------------|-------------|
@@ -435,6 +451,15 @@ appointments (M) ────────── (1) users (doctor — nullable)
 | GET | `/all` | Admin | All records system-wide |
 | PUT | `/{id}` | Doctor | Update existing record |
 | DELETE | `/{id}` | Admin | Delete record |
+
+### Doctor Leaves — /api/leaves
+| Method | Endpoint | Access | Description |
+|--------|----------|--------|-------------|
+| POST | /add | Doctor | Add a leave date |
+| GET | /my | Doctor | Get own upcoming leaves |
+| DELETE | /{id} | Doctor | Cancel a leave |
+| GET | /doctor/{doctorId} | Patient | View doctor's leaves |
+| GET | /check | Any | Quick leave check |
 
 ### 🔔 Notifications — `/api/notifications`
 | Method | Endpoint | Auth | Description |
@@ -750,6 +775,11 @@ npm start
 | Create Medical Record | [<img src="screenshots/14-doctor-create-record.png" width="200">](screenshots/14-doctor-create-record.png) |
 | Doctor Notifications | [<img src="screenshots/32-doctor-notifications.png" width="200">](screenshots/32-doctor-notifications.png) |
 | Doctor Profile & Hospital | [<img src="screenshots/33-doctor-profile-hospital.png" width="200">](screenshots/33-doctor-profile-hospital.png) |
+| My Leaves Tab — Empty State | [<img src="screenshots/51-doctor-leaves-empty.png" width="200">](screenshots/51-doctor-leaves-empty.png) |
+| Add Leave Form | [<img src="screenshots/52-doctor-leaves-add-form.png" width="200">](screenshots/52-doctor-leaves-add-form.png) |
+| Upcoming Leaves List | [<img src="screenshots/53-doctor-leaves-list.png" width="200">](screenshots/53-doctor-leaves-list.png) |
+| Cancel Leave Confirmation | [<img src="screenshots/54-doctor-leaves-cancel-dialog.png" width="200">](screenshots/54-doctor-leaves-cancel-dialog.png) |
+| Patient — Leave Date Warning | [<img src="screenshots/55-patient-leave-warning.png" width="200">](screenshots/55-patient-leave-warning.png) |
 
 ---
 
